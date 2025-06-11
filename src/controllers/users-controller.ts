@@ -3,6 +3,7 @@ import { prisma } from "@/database/prisma";
 import { hash } from "bcrypt";
 import { z } from "zod";
 import { AppError } from "@/utils/AppError";
+import { log } from "console";
 
 class UsersController {
   async create(request: Request, response: Response) {
@@ -10,9 +11,10 @@ class UsersController {
       name: z.string().trim().min(1),
       email: z.string().email(),
       password: z.string().min(6),
+      role: z.any(),
     });
 
-    const { name, email, password } = bodySchema.parse(request.body);
+    const { name, email, password, role } = bodySchema.parse(request.body);
 
     const userWithSameEmail = await prisma.user.findFirst({ where: { email } });
 
@@ -27,8 +29,11 @@ class UsersController {
         name,
         email,
         password: hashedPassword,
+        role,
       },
     });
+
+    console.log(user);
 
     const { password: _, ...userWithoutPassword } = user;
 
