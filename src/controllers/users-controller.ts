@@ -3,7 +3,6 @@ import { prisma } from "@/database/prisma";
 import { hash } from "bcrypt";
 import { z } from "zod";
 import { AppError } from "@/utils/AppError";
-import { log } from "console";
 
 class UsersController {
   async create(request: Request, response: Response) {
@@ -11,7 +10,7 @@ class UsersController {
       name: z.string().trim().min(1),
       email: z.string().email(),
       password: z.string().min(6),
-      role: z.any(),
+      role: z.enum(["seller", "customer"]),
     });
 
     const { name, email, password, role } = bodySchema.parse(request.body);
@@ -32,8 +31,6 @@ class UsersController {
         role,
       },
     });
-
-    console.log(user);
 
     const { password: _, ...userWithoutPassword } = user;
 
