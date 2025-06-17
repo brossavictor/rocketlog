@@ -27,10 +27,10 @@ class SessionsController {
       throw new AppError("E-mail or password is not valid.", 401);
     }
 
-    const { secret, expiresIn } = authConfig.jwt;
+    const { secret } = authConfig.jwt;
     const token = sign({ role: user.role ?? "customer" }, secret, {
       subject: user.id,
-      expiresIn,
+      expiresIn: "24h",
     });
 
     const { password: hashedPassword, ...userWithoutPassword } = user;
