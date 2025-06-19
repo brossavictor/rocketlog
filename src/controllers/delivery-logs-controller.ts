@@ -47,6 +47,10 @@ class DeliveryLogController {
       },
     });
 
+    if (!delivery) {
+      throw new AppError("Delivery not found.", 404);
+    }
+
     if (
       request.user?.role === "customer" &&
       request.user.id !== delivery?.userId
